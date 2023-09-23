@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import java.util.*
-import kotlin.concurrent.timer
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,35 +15,45 @@ class MainActivity : AppCompatActivity() {
         var timerTask: Timer? = null
         var sec : Int = 0
         var isRunning = false
-        val tv : TextView = findViewById(R.id.tv_hello)
+        val tv : TextView = findViewById(R.id.tv_random)
+        val tv_t : TextView = findViewById(R.id.tv_timer)
+        val tv_s : TextView = findViewById(R.id.tv_score)
         val btn : Button = findViewById(R.id.btn_call)
+        val btn_r : Button = findViewById(R.id.btn_reset)
+
+        var random_box = Random()
+        var num = random_box.nextInt(1000)
+        tv.text = (num.toFloat()/100).toString()
+
+
 
         btn.setOnClickListener{
-            val random_box = Random()
-            val num = random_box.nextInt(10) + 1
-            tv.text = ((num.toFloat())/100).tofloat()
+            isRunning = !isRunning
+
+            if(isRunning == true) {
+                btn.text = "중지"
+                timerTask = kotlin.concurrent.timer(period = 10) {
+                    sec++
+                    runOnUiThread {
+                        tv_t.text = (sec.toFloat()/100).toString()
+                    }
+                }
+            }
+            else {
+                btn.text = "시작"
+                timerTask?.cancel();
+                val point = (abs(sec - num).toFloat())/100
+                tv_s.text = point.toString()
+            }
         }
 
-
-//        btn.setOnClickListener{
-//            isRunning = !isRunning
-//
-//            if(isRunning == true) {
-//                btn.text = "중지"
-//                timerTask = kotlin.concurrent.timer(period = 10) {
-//                    sec++
-//                    runOnUiThread {
-//                        tv.text = (sec.toFloat()/100).toString()
-//                    }
-//                }
-//            }
-//            else {
-//                btn.text = "시작"
-//                timerTask?.cancel();
-//            }
-//        }
-
-
+        btn_r.setOnClickListener{
+            random_box = Random()
+            num = random_box.nextInt(1000)
+            tv.text = (num.toFloat()/100).toString()
+            sec = 0
+            tv_t.text = "0"
+        }
 
 
 
